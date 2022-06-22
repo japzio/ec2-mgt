@@ -24,16 +24,16 @@ import java.util.concurrent.Callable;
 )
 public class App implements Callable<Integer> {
 
-    @CommandLine.Parameters(index = "0" , description = "option start or stop")
+    @CommandLine.Parameters(index = "0" , paramLabel = "command", description = "option start or stop")
     private Command command;
 
-    @CommandLine.Parameters(index = "1" , description = "tag key")
+    @CommandLine.Parameters(index = "1", paramLabel = "tag-key", description = "tag key")
     private String tagKey;
 
-    @CommandLine.Option(names={"-v", "--tag-values"}, description = "Possible values of the tag key parameter provided, command separated.")
+    @CommandLine.Option(names={"-v", "--tag-values"}, paramLabel = "tag value(s)", description = "Possible values of the tag key parameter provided, command separated.")
     private String tagValues;
 
-    @CommandLine.Option(names={"-r", "--region"}, description = "Specific region.")
+    @CommandLine.Option(names={"-r", "--region"}, paramLabel = "aws region", description = "Specific region.")
     private String awsRegion;
 
     private Region region = StringUtils.isBlank(awsRegion) ? Region.US_WEST_2 : Region.of(awsRegion);
