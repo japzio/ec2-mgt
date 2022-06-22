@@ -1,6 +1,6 @@
 package com.japzio.devops.service;
 
-import com.japzio.devops.CustomResponse;
+import com.japzio.devops.model.CustomResponse;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;

@@ -1,5 +1,7 @@
 package com.japzio.devops;
 
+import com.japzio.devops.model.Command;
+import com.japzio.devops.model.CustomResponse;
 import com.japzio.devops.service.Ec2Mgt;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

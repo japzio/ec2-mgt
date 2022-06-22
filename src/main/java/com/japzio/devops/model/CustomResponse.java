@@ -1,4 +1,4 @@
-package com.japzio.devops;
+package com.japzio.devops.model;
 
 import lombok.*;
 
