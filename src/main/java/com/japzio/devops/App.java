@@ -1,16 +1,16 @@
 package com.japzio.devops;
 
-
-import lombok.extern.slf4j.*;
-import picocli.*;
-import software.amazon.awssdk.auth.credentials.*;
+import com.japzio.devops.service.Ec2Mgt;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import picocli.CommandLine;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.ec2.*;
-import software.amazon.awssdk.services.ec2.model.*;
-import software.amazon.awssdk.utils.*;
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.ec2.model.Filter;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Start and Stop Instances
@@ -38,6 +38,8 @@ public class App implements Callable<Integer> {
 
     private Region region = StringUtils.isBlank(awsRegion) ? Region.US_WEST_2 : Region.of(awsRegion);
 
+    private Ec2Mgt ec2Mgt = new Ec2Mgt();
+
     @Override
     public Integer call() throws Exception {
 
@@ -50,7 +52,14 @@ public class App implements Callable<Integer> {
 
         Filter tagFilters  = StringUtils.isBlank(tagValues) ? Filter.builder().name("tag:" + tagKey).build() : Filter.builder().name("tag:" + tagKey).values("true").build();
 
-        CustomResponse customResponse = command.equals(Command.START) ? startInstances(ec2, instanceIds(ec2, tagFilters)) : stopInstances(ec2, instanceIds(ec2, tagFilters));
+        List<String> instancesByTag = ec2Mgt.instanceIds(ec2, tagFilters);
+
+        if (instancesByTag.isEmpty()) {
+            log.debug("No instance found by tag key(and value) specified");
+            return 404;
+        }
+
+        CustomResponse customResponse = command.equals(Command.START) ? ec2Mgt.startInstances(ec2, ec2Mgt.instanceIds(ec2, tagFilters)) : ec2Mgt.stopInstances(ec2, ec2Mgt.instanceIds(ec2, tagFilters));
 
         return customResponse.responseCode == 200 ? 0 : customResponse.responseCode;
     }
@@ -62,40 +71,5 @@ public class App implements Callable<Integer> {
 
     }
 
-    public static CustomResponse startInstances(Ec2Client ec2Client, List<String> instanceIds) {
 
-        log.debug("Stopping instances...");
-        StartInstancesRequest request = StartInstancesRequest.builder().instanceIds(instanceIds).build();
-        StartInstancesResponse response = ec2Client.startInstances(request);
-        log.debug(response.toString());
-
-        return new CustomResponse(response.sdkHttpResponse().isSuccessful(), response.sdkHttpResponse().statusCode());
-    }
-
-    public static CustomResponse stopInstances(Ec2Client ec2Client, List<String> instanceIds) {
-
-        StopInstancesRequest request = StopInstancesRequest.builder().instanceIds(instanceIds).build();
-        StopInstancesResponse response = ec2Client.stopInstances(request);
-        log.debug(response.toString());
-
-        return new CustomResponse(response.sdkHttpResponse().isSuccessful(), response.sdkHttpResponse().statusCode());
-    }
-
-    public static List<String> instanceIds(Ec2Client ec2Client, Filter filter) {
-
-        List<String> instanceIds = new ArrayList<>();
-        DescribeInstancesRequest request = DescribeInstancesRequest.builder().filters(filter).build();
-
-        log.debug("Running describe instance...");
-        DescribeInstancesResponse result = ec2Client.describeInstances(request);
-
-        result.reservations().forEach(reservation -> {
-            reservation.instances().forEach(instance -> {
-                instanceIds.add(instance.instanceId());
-                log.info(instance.instanceId());
-            });
-        });
-
-        return instanceIds;
-    }
 }
