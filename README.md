@@ -15,3 +15,7 @@ Ensure aws credentials has been set
 # Credits
 
 @japzio
+
+# Special Thanks To
+
+External library authors see [pom.xml](pom.xml)
