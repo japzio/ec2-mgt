@@ -17,9 +17,9 @@ import java.util.concurrent.Callable;
  */
 @Slf4j
 @CommandLine.Command(
-        name="on-off-ec2",
+        name="ec2-mgt",
         mixinStandardHelpOptions = true,
-        version = "on-off-ec2 0.1-dev",
+        version = "ec2-mgt 0.1-dev",
         description = "Starts or stops ec2 instances based on specified tag"
 )
 public class App implements Callable<Integer> {
@@ -70,6 +70,4 @@ public class App implements Callable<Integer> {
         System.exit(exitCode);
 
     }
-
-
 }

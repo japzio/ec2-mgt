@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.japzio.devops</groupId>
-  <artifactId>on-off-ec2</artifactId>
+  <artifactId>ec2-mgt</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>on-off-ec2</name>
+  <name>ec2-mgt</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
